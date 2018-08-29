@@ -1,5 +1,8 @@
-
-import { ADD_TODO, TOGGLE_TODO } from '../actions';
+import {
+  ADD_TODO,
+  TOGGLE_TODO,
+  UPDATE_TODO
+} from '../actions';
 
 let nextId = 1;
 
@@ -12,9 +15,17 @@ const todoListReducer = (state = [], action) => {
         done: false
       }
       return [...state, newTodo];
-    case TOGGLE_TODO:
+    case UPDATE_TODO:
       return state.map(todo => {
-        if(todo.id === action.todoId)
+        if (todo.id === action.todo.id) {
+          return action.todo;
+        }
+        return todo;
+      });
+    case TOGGLE_TODO:
+      console.log(state);
+      return state.map(todo => {
+        if (todo.id === action.todoId)
           return {
             ...todo,
             done: !todo.done
@@ -26,4 +37,4 @@ const todoListReducer = (state = [], action) => {
   }
 }
 
-export default todoListReducer; 
+export default todoListReducer;

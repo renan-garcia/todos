@@ -2,31 +2,25 @@ import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { connect } from 'react-redux';
 import Input from './Input';
-import { addTodo } from '../actions';
+import { addTodo, setTodoText, updateTodo } from '../actions';
 
 
 class TodoForm extends React.Component {
-  constructor(props){
-    super(props);
 
-    this.state = {
-      text: ''
-    }
-  }
 
   onChangeText(text){
-    this.setState({
-      text
-    })
+    this.props.dispatchSetTodoText(text);
   }
 
   onPress() {
-    this.props.dispatchAddTodo(this.state.text)
-    this.setState({ text: '' });
+    const { todo } = this.props;
+    if (todo.id)
+      return this.props.dispatchUpdateTodo(todo);
+    return this.props.dispatchAddTodo(todo.text);
   }
 
   render() {
-    const { text } = this.state;
+    const { text, id } = this.props.todo;
 
     return (
       <View style={styles.formContainer}>
@@ -39,7 +33,7 @@ class TodoForm extends React.Component {
         <View style={styles.buttonContainer}>
           <Button
             onPress={() => this.onPress()}
-            title="Add" />
+            title={ id ? "save" : "add" } />
         </View>
       </View>
     );
@@ -58,15 +52,16 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = null;
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     dispatchAddTodo: text => dispatch(addTodo(text))
-//   }
-// }
+const mapStateToProps = state => {
+  return {
+    todo: state.editingTodo
+  }
+}
 
 const mapDispatchToProps = {
-  dispatchAddTodo: addTodo
+  dispatchAddTodo: addTodo,
+  dispatchSetTodoText: setTodoText,
+  dispatchUpdateTodo: updateTodo
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TodoForm);
